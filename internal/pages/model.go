@@ -1,0 +1,269 @@
+package pages
+
+import (
+	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+
+	"ssh-yassine/internal/view"
+)
+
+type tickMsg time.Time
+
+type page int
+
+const (
+	splashPage page = iota
+	menuPage
+	aboutPage
+	projectsPage
+	educationPage
+	experiencePage
+	contactPage
+)
+
+type model struct {
+	currentPage     page
+	splashReveal    int
+	splashBlinkStep int
+	menuCursor      int
+	projectCursor   int
+	expCursor       int
+	eduCursor       int
+	aboutReveal     int
+	aboutScramble   int
+	width           int
+	height          int
+	logoSweepIndex  int
+	themeIndex      int
+	styles          view.ThemeStyles
+}
+
+func initialModel() model {
+	initialPalette := view.ThemeAt(0)
+	return model{
+		currentPage:     splashPage,
+		splashReveal:    0,
+		splashBlinkStep: 0,
+		menuCursor:      0,
+		projectCursor:   0,
+		eduCursor:       0,
+		aboutReveal:     0,
+		aboutScramble:   0,
+		width:           80,
+		height:          24,
+		logoSweepIndex:  0,
+		themeIndex:      0,
+		styles:          view.NewThemeStyles(initialPalette),
+	}
+}
+
+func NewModel() tea.Model {
+	return initialModel()
+}
+
+func (m model) Init() tea.Cmd {
+	return splashTickCmd()
+}
+
+// Controls
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tickMsg:
+		if m.currentPage == splashPage {
+			m.splashBlinkStep++
+			if m.splashBlinkStep >= 1_000_000 {
+				m.splashBlinkStep = 0
+			}
+			logoTotal := SplashLogoRuneCount()
+			total := SplashRuneCount()
+			if m.splashReveal < logoTotal {
+				m.splashReveal += splashLogoRevealStep
+				if m.splashReveal > logoTotal {
+					m.splashReveal = logoTotal
+				}
+			} else if m.splashReveal < total {
+				if m.splashBlinkStep%splashTextRevealTickDivisor == 0 {
+					m.splashReveal++
+				}
+			}
+			return m, splashTickCmd()
+		}
+		if m.currentPage == menuPage {
+			m.logoSweepIndex++
+			return m, tickCmd()
+		}
+		if m.currentPage == aboutPage {
+			if m.aboutReveal < AboutRuneCount() {
+				m.aboutReveal++
+				m.aboutScramble++
+				return m, typewriterTickCmd()
+			}
+			if m.aboutScramble < m.aboutReveal+AboutSettleTicks() {
+				m.aboutScramble++
+				return m, typewriterTickCmd()
+			}
+		}
+		return m, nil
+
+	case tea.WindowSizeMsg:
+		m.width = msg.Width
+		m.height = msg.Height
+		return m, nil
+
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			if m.currentPage == menuPage || m.currentPage == splashPage {
+				return m, tea.Quit
+			}
+			m.currentPage = menuPage
+			return m, tickCmd()
+
+		case "esc", "backspace":
+			if m.currentPage == splashPage {
+				return m, nil
+			}
+			if m.currentPage != menuPage {
+				m.currentPage = menuPage
+			}
+			return m, tickCmd()
+
+		case "up", "k":
+			switch m.currentPage {
+			case menuPage:
+				if m.menuCursor > 0 {
+					m.menuCursor--
+				}
+			case projectsPage:
+				if m.projectCursor > 0 {
+					m.projectCursor--
+				}
+			case educationPage:
+				if m.eduCursor > 0 {
+					m.eduCursor--
+				}
+			}
+			return m, nil
+
+		case "down", "j":
+			switch m.currentPage {
+			case menuPage:
+				if m.menuCursor < len(menuItems)-1 {
+					m.menuCursor++
+				}
+			case projectsPage:
+				if m.projectCursor < len(projects)-1 {
+					m.projectCursor++
+				}
+			case educationPage:
+				if m.eduCursor < len(educations)-1 {
+					m.eduCursor++
+				}
+			case experiencePage:
+				if m.expCursor < len(experiences)-1 {
+					m.expCursor++
+				}
+			}
+			return m, nil
+
+		case "enter", " ":
+			if m.currentPage == splashPage {
+				m.currentPage = menuPage
+				m.logoSweepIndex = 0
+				return m, tickCmd()
+			}
+			if m.currentPage == menuPage {
+				switch m.menuCursor {
+				case 0:
+					m.currentPage = aboutPage
+					m.aboutReveal = 0
+					m.aboutScramble = 0
+					return m, typewriterTickCmd()
+				case 1:
+					m.currentPage = projectsPage
+				case 2:
+					m.currentPage = educationPage
+				case 3:
+					m.currentPage = experiencePage
+				case 4:
+					m.currentPage = contactPage
+				}
+			}
+			return m, nil
+
+		case "t", "T":
+			m.themeIndex = view.NextThemeIndex(m.themeIndex)
+			m.styles = view.NewThemeStyles(view.ThemeAt(m.themeIndex))
+			return m, nil
+		}
+	}
+	return m, nil
+}
+
+func (m model) themeLabel() string {
+	name := view.ThemeAt(m.themeIndex).Name
+	if name == "" {
+		return "t: change theme"
+	}
+	return "t: theme (" + name + ")"
+}
+
+func tickCmd() tea.Cmd {
+	return tea.Tick(50*time.Millisecond, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
+}
+
+const splashTick = 40 * time.Millisecond
+
+const splashLogoRevealStep = 3
+
+const splashTextRevealTickDivisor = 1
+
+func typewriterTickCmd() tea.Cmd {
+	return tea.Tick(typewriterTick, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
+}
+
+const typewriterTick = 40 * time.Millisecond
+
+func splashTickCmd() tea.Cmd {
+	return tea.Tick(splashTick, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
+}
+
+func (m model) View() string {
+	themeLabel := m.themeLabel()
+	boxWidth := min(m.width-4, 70)
+	var content string
+
+	switch m.currentPage {
+	case splashPage:
+		content = RenderSplash(m.styles, m.splashReveal, m.splashBlinkStep, boxWidth)
+	case menuPage:
+		content = RenderMenu(m.styles, m.menuCursor, m.logoSweepIndex, themeLabel, boxWidth)
+	case aboutPage:
+		content = RenderAbout(m.styles, m.aboutReveal, m.aboutScramble, themeLabel, boxWidth)
+	case projectsPage:
+		content = RenderProjects(m.styles, m.projectCursor, themeLabel)
+	case educationPage:
+		content = RenderEducation(m.styles, m.eduCursor, themeLabel)
+	case experiencePage:
+		content = RenderExperience(m.styles, m.expCursor, themeLabel)
+	case contactPage:
+		content = RenderContact(m.styles, themeLabel)
+	}
+
+	boxedContent := lipgloss.NewStyle().
+		Padding(1, 2).
+		Width(boxWidth).
+		Render(content)
+
+	return lipgloss.Place(m.width, m.height,
+		lipgloss.Center, lipgloss.Center,
+		boxedContent)
+}

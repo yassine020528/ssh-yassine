@@ -1,0 +1,102 @@
+package pages
+
+import (
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
+
+	"ssh-yassine/internal/view"
+)
+
+const splashIntroPrefix = "Hi! Welcome to "
+const splashIntroName = "Yassine's"
+const splashIntroSuffix = " terminal portfolio!"
+const splashIntroLink = "https://yassineabassi.com"
+const splashIntroText = splashIntroPrefix + splashIntroName + splashIntroSuffix
+const splashCommandBar = "enter: continue"
+const splashTickMillis = 40
+const splashBlinkIntervalMillis = 500
+
+var splashRunes = []rune(splashIntroText)
+var splashLogoTypewriterRunes = view.LogoTypewriterRuneCount()
+
+func SplashLogoRuneCount() int {
+	return splashLogoTypewriterRunes
+}
+
+func SplashTextRuneCount() int {
+	return len(splashRunes)
+}
+
+func SplashRuneCount() int {
+	return SplashLogoRuneCount() + SplashTextRuneCount()
+}
+
+func RenderSplash(styles view.ThemeStyles, revealCount int, blinkStep int, boxWidth int) string {
+	total := SplashRuneCount()
+	if revealCount < 0 {
+		revealCount = 0
+	}
+	if revealCount > total {
+		revealCount = total
+	}
+
+	contentWidth := splashContentWidth(boxWidth)
+	logoCount := SplashLogoRuneCount()
+	logoReveal := revealCount
+	if logoReveal > logoCount {
+		logoReveal = logoCount
+	}
+	textReveal := revealCount - logoCount
+	if textReveal < 0 {
+		textReveal = 0
+	}
+
+	textTotal := SplashTextRuneCount()
+	text := renderSplashText(styles, textReveal, textTotal)
+	cursor := ""
+	if textReveal >= textTotal {
+		cursor = " " + renderSplashCursor(styles, blinkStep)
+	}
+
+	var b strings.Builder
+	const logoWidth = 60
+	b.WriteString(view.RenderTypewriterLogo(logoWidth, logoReveal, styles.LogoBase))
+	b.WriteString("\n\n")
+
+	line := text + cursor
+	b.WriteString(lipgloss.NewStyle().Width(contentWidth).Align(lipgloss.Center).Render(line))
+	b.WriteString("\n")
+	b.WriteString(styles.Help.Copy().Width(contentWidth).Align(lipgloss.Center).Render(splashCommandBar))
+
+	return b.String()
+}
+
+func renderSplashText(styles view.ThemeStyles, revealCount, total int) string {
+	if revealCount < total {
+		return styles.Content.Render(string(splashRunes[:revealCount]))
+	}
+	name := view.ClickableLink(styles.Accent.Copy().Bold(false).Underline(true).Render(splashIntroName), splashIntroLink)
+	return styles.Content.Render(splashIntroPrefix) + name + styles.Content.Render(splashIntroSuffix)
+}
+
+func renderSplashCursor(styles view.ThemeStyles, blinkStep int) string {
+	if blinkStep < 0 {
+		blinkStep = 0
+	}
+	phase := (blinkStep * splashTickMillis) / splashBlinkIntervalMillis
+	if phase%2 == 0 {
+		return styles.Accent.Copy().Bold(true).Render("█")
+	}
+	return " "
+}
+
+func splashContentWidth(boxWidth int) int {
+	if boxWidth <= 0 {
+		return 60
+	}
+	if boxWidth > 4 {
+		return boxWidth - 4
+	}
+	return boxWidth
+}
