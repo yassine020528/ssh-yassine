@@ -123,13 +123,13 @@ tmux-256color
 Build the image:
 
 ```bash
-docker build -t terminal-site .
+docker build -t ssh-yassine .
 ```
 
 Run it locally:
 
 ```bash
-docker run --rm -p 2222:2222 terminal-site
+docker run --rm -p 2222:2222 ssh-yassine
 ```
 
 Then connect:
@@ -145,7 +145,7 @@ This repo includes `fly.toml` and a GitHub Actions workflow for deployment.
 The Fly service maps external TCP port `22` to the app's internal port `2222`, so deployed users can connect over standard SSH:
 
 ```bash
-ssh terminal-site.fly.dev
+ssh ssh-yassine.fly.dev
 ```
 
 If using a custom domain, connect to that host instead:

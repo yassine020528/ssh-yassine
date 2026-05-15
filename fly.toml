@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for terminal-site on 2026-05-14T04:18:05-04:00
+# fly.toml app configuration file generated for ssh-yassine on 2026-05-14T04:18:05-04:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'terminal-site'
+app = 'ssh-yassine'
 primary_region = 'ewr'
 
 [build]
