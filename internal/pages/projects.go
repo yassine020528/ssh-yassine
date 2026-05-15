@@ -30,7 +30,7 @@ var projects = []Project{
 		Name: "Terminal Portfolio",
 		Desc: "SSH-based interactive portfolio application served over SSH, built with Go, Wish, and Bubble Tea.",
 		Tech: "Go, Wish, Bubble Tea",
-		Link: "https://ssh.yassineabassi.com",
+		Link: "https://yassineabassi.com/ssh",
 	},
 	{
 		Name: "Lost Woods Browser Horror Game",
