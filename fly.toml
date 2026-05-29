@@ -16,7 +16,9 @@ primary_region = 'yyz'
 
   [[services.ports]]
     port = 22
-
+  [[services.ports]]
+    port = 443
+    
 [[vm]]
   memory = '1gb'
   cpu_kind = 'shared'
