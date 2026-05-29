@@ -147,6 +147,10 @@ The Fly service maps external TCP port `22` to the app's internal port `2222`, s
 ```bash
 ssh ssh-yassine.fly.dev
 ```
+# If you're on a restricted network (café, school...):
+```bash
+ssh -p 443 ssh-yassine.fly.dev
+```
 
 If using a custom domain, connect to that host instead:
 
