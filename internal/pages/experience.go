@@ -23,7 +23,7 @@ var experiences = []Experience{
 	},
 	{
 		Role:    "Software Quality Assurance Intern",
-		Company: "UPTOTEST",
+		Company: "UpToTest",
 		Period:  "May 2024 - Sep 2024",
 		Desc:    "Designed and automated end-to-end functional test suites for the KOORS web app using Cypress with Cucumber/Gherkin in a BDD workflow.",
 	},
