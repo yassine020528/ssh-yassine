@@ -16,6 +16,12 @@ type Experience struct {
 
 var experiences = []Experience{
 	{
+		Role:    "Software Developer - Capstone Project",
+		Company: "Hydro-Québec",
+		Period:  "Jan 2026 - May 2026",
+		Desc:    "Built a full-stack weather platform (Angular / ASP.NET Core) implementing GDAL raster processing and Docker containerization.",
+	},
+	{
 		Role:    "Software Quality Assurance Intern",
 		Company: "UPTOTEST",
 		Period:  "May 2024 - Sep 2024",
