@@ -28,9 +28,21 @@ var projects = []Project{
 	},
 	{
 		Name: "Terminal Portfolio",
-		Desc: "SSH-based interactive portfolio application served over SSH, built with Go, Wish, and Bubble Tea.",
-		Tech: "Go, Wish, Bubble Tea",
+		Desc: "SSH-based interactive portfolio application served over SSH, built with Go and Charm, deployed on Fly.io.",
+		Tech: "Go, Charm, Fly.io",
 		Link: "https://yassineabassi.com/ssh",
+	},
+	{
+		Name: "Corporate LinkedIn Translator ",
+		Desc: "Chrome extension that translates LinkedIn buzzwords into plain satirical language.",
+		Tech: "Node.js/Express, Fly.io",
+		Link: "https://github.com/yassine020528/corporate-translator",
+	},
+	{
+		Name: "WildGuard - AI Wildlife Monitoring System",
+		Desc: "AI-powered ecological surveillance platform in Python for anti-poaching and endangered species protection.",
+		Tech: "Python, Socket.IO, Twilio, YOLOv8, Flask",
+		Link: "https://github.com/yassine020528/wildguard",
 	},
 	{
 		Name: "Lost Woods Browser Horror Game",
