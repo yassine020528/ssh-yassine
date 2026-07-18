@@ -16,6 +16,12 @@ type Experience struct {
 
 var experiences = []Experience{
 	{
+		Role:    "Research Software Intern",
+		Company: "FUI Center for Translational Science",
+		Period:  "May 2026 - July 2026",
+		Desc:    "Built a Python/RDKit tool to automate combinatorial molecule enumeration, exporting a validated library of 10,000+ compounds for research use.",
+	},
+	{
 		Role:    "Software Developer - Capstone Project",
 		Company: "Hydro-Québec",
 		Period:  "Jan 2026 - May 2026",

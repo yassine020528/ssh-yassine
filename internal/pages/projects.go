@@ -15,12 +15,6 @@ type Project struct {
 
 var projects = []Project{
 	{
-		Name: "Hydro-Quebec Weather Forecasting Platform",
-		Desc: "Full-stack weather visualization platform with interactive geospatial mapping and real-time updates.",
-		Tech: "Angular, .NET, EF Core, GDAL, Leaflet, SignalR, Docker",
-		Link: "",
-	},
-	{
 		Name: "3D Interactive Portfolio",
 		Desc: "3D portfolio with an interactive room featuring a functional OS, custom camera rigging, and state-driven transitions.",
 		Tech: "React.js, Three.js, Upstash Redis",
