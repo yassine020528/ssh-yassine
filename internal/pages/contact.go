@@ -20,7 +20,7 @@ func RenderContact(styles view.ThemeStyles, themeLabel string) string {
 
 	githubURL := "https://github.com/yassine020528"
 	mailtoURL := "mailto:yassine020528@gmail.com"
-	linkedinURL := "https://www.linkedin.com/in/yassine-abassi-b9ba721a6/"
+	linkedinURL := "https://www.linkedin.com/in/yassine-abassi/"
 	portfolioURL := "https://yassineabassi.com"
 
 	leftLines := []string{
